@@ -34,7 +34,48 @@ dependencies {
     implementation libs.material
     implementation libs.activity
     implementation libs.constraintlayout
+    implementation libs.work.runtime
+    implementation libs.firebase.messaging
+    implementation libs.navigation.fragment
+    implementation libs.navigation.ui
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
+    implementation 'com.google.android.material:material:1.5.0'
+    implementation 'androidx.fragment:fragment:1.4.1'
+    // RxJava
+    implementation 'io.reactivex.rxjava3:rxjava:3.0.12'
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
+    // Worker Manager
+    implementation 'androidx.work:work-runtime:2.7.1'
+    // Open street map
+    implementation 'org.osmdroid:osmdroid-android:6.1.10'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'androidx.preference:preference:1.2.0'
+    // Para más efectos de contra
+    implementation 'com.google.android.material:material:1.12.0'
+    // CardView
+    implementation 'androidx.cardview:cardview:1.0.0'
+    // Glide para cargar imágenes (opcional, para iconos personalizados)
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
+    // OSMDroid (Mapa OpenStreetMap)
+    implementation 'org.osmdroid:osmdroid-mapsforge:6.1.16'  // Opcional para caché offline
+    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+    implementation 'org.bouncycastle:bcprov-jdk15on:1.70'
+
+    // Google Maps
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
+    implementation 'com.google.maps:google-maps-services:2.2.0'
+    implementation 'com.google.maps.android:android-maps-utils:3.4.0'
+
+
+
+
+
 }

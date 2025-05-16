@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="andar">Walking</string>
+    <string name="bici">Bici</string>
+    <string name="bus">Bus</string>
+    <string name="origen">Origin</string>
+    <string name="hint_origen">Enter your origin</string>
+    <string name="destino">Destination</string>
+    <string name="hint_destino">Enter your destination</string>
+    <string name="fecha_trayecto">Trip date</string>
+    <string name="hora_trayecto">Trip time</string>
+    <string name="hint_fecha">mm/dd/yyyy</string>
+    <string name="hint_hora">hh:mm</string>
+    <string name="consultar">Search</string>
+    <string name="general">General Settings</string>
+    <string name="notifi">Notifications</string>
+    <string name="idioma">Language</string>
+    <string name="temaApp">Appearance of the APP</string>
+    <string name="cerrarsesion">Log Out</string>
+    <string name="bienvenido">Welcome</string>
+    <string name="bienvenido_con_nombre">Welcome %s</string>
+</resources>

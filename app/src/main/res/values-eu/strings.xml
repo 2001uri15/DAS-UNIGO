@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="andar">Ibiltzen</string>
+    <string name="bici">Bizikleta</string>
+    <string name="bus">Autobusa</string>
+    <string name="origen">Jatorria</string>
+    <string name="hint_origen">Sartu zure jatorria</string>
+    <string name="destino">Helmuga</string>
+    <string name="hint_destino">Sartu zure helmuga</string>
+    <string name="fecha_trayecto">Bidaia data</string>
+    <string name="hora_trayecto">Bidaia ordua</string>
+    <string name="hint_fecha">uu/hh/eeee</string>
+    <string name="hint_hora">hh:mm</string>
+    <string name="consultar">Kontsultatu</string>
+    <string name="general">Ezarpen Orokorrak</string>
+    <string name="notifi">Jakinarazpenak</string>
+    <string name="idioma">Hizkuntza</string>
+    <string name="temaApp">APParen itxura.</string>
+    <string name="cerrarsesion">Saioa itxi</string>
+    <string name="bienvenido">Ongi etorri</string>
+    <string name="bienvenido_con_nombre">Ongi etorri %s</string>
+</resources>

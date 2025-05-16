@@ -1,3 +1,38 @@
 <resources>
-    <string name="app_name">UNIGO</string>
+    <string name="app_name" translatable="false">MovGazteiz</string>
+    <string name="andar">Andando</string>
+    <string name="bici">Bicicleta</string>
+    <string name="bus">Autobus</string>
+    <string name="hello_blank_fragment" translatable="false">Fragment Andando</string>
+    <string name="origen">Origen</string>
+    <string name="hint_origen">Introduce tu origen</string>
+    <string name="destino">Destino</string>
+    <string name="hint_destino">Introduce tu destino</string>
+    <string name="fecha_trayecto">Fecha del trayecto</string>
+    <string name="hora_trayecto">Hora del trayecto</string>
+    <string name="hint_fecha">dd/mm/aaaa</string>
+    <string name="hint_hora">hh:mm</string>
+    <string name="consultar">Consultar</string>
+    <string name="bienvenido">Bienvenido</string>
+    <string name="bienvenido_con_nombre">Bienvenido %s</string>
+
+
+    <string-array name="language_options">
+        <item>Castellano</item>
+        <item>Euskara</item>
+        <item>English</item>
+    </string-array>
+
+    <style name="MyDatePickerDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <string name="general">Ajustes Generales</string>
+    <string name="notifi">Notificaciones</string>
+    <string name="idioma">Idioma</string>
+    <string name="temaApp">Apariencia de la APP</string>
+    <string name="cerrarsesion">Cerrar Sesión</string>
+
 </resources>

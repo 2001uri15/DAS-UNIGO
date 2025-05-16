@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!-- VERDE -->
+    <color name="green_primary">#006400</color>          <!-- Principal -->
+    <color name="green_light">#228B22</color>            <!-- Más claro -->
+    <color name="green_dark">#003300</color>             <!-- Más oscuro -->
+
+    <!-- MORADO -->
+    <color name="purple_primary">#800080</color>         <!-- Principal -->
+    <color name="purple_light">#A020F0</color>           <!-- Más claro -->
+    <color name="purple_dark">#4B0082</color>            <!-- Más oscuro -->
+
+    <!-- Comunes -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorAccent">#03DAC5</color>
+    <color name="colorPrimary">#6200EE</color>
+    <color name="light_blue">#ADD8E6</color> <!-- Azul claro -->
+    <color name="pastel_blue">#A2C8FF</color> <!-- Azul pastel -->
+    <color name="very_light_blue">#B3C7F9</color> <!-- Azul muy claro -->
+    <color name="grisImgGaz">#D3D3D3</color>
+    <color name="divider">#E0E0E0</color>
+    <color name="favorite_gold">#FFD700</color>
+    <color name="favorite_gray">#D3D3D3</color>
+
 </resources>
