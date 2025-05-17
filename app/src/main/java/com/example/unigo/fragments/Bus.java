@@ -1,10 +1,13 @@
 package com.example.unigo.fragments;
 
+import static android.view.View.GONE;
+
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -24,8 +27,10 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.Manifest;
 
 import androidx.appcompat.widget.AppCompatImageButton;
+import androidx.core.content.ContextCompat;
 import androidx.core.widget.ImageViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.work.Data;
@@ -33,15 +38,16 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
-import com.example.unigo.Home;
 import com.example.unigo.R;
 import com.example.unigo.database.DBLocal;
 import com.example.unigo.database.DBServer;
 import com.example.unigo.model.Parada;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.material.datepicker.MaterialDatePicker;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
@@ -66,8 +72,8 @@ public class Bus extends Fragment {
 
     private AutoCompleteTextView inputOrigen, inputDestino;
     private EditText inputFecha, inputHora;
-    private Button btnConsultar ;
-    private AppCompatImageButton btnFavorito;
+    private Button btnConsultar;
+    private AppCompatImageButton btnFavorito, btnUbicacion;
     private ListView listSugerenciasOrigen, listSugerenciasDestino;
     private List<Parada> paradas = new ArrayList<>();
     private CompositeDisposable disposables = new CompositeDisposable();
@@ -94,6 +100,7 @@ public class Bus extends Fragment {
         textMarquesinas = view.findViewById(R.id.textMarquesinas);
         textCementerio = view.findViewById(R.id.textCementerio);
         btnFavorito = view.findViewById(R.id.btnFavorito);
+        btnUbicacion = view.findViewById(R.id.btnUbicacion);
 
         dbHelper = new DBLocal(getContext());
 
@@ -117,14 +124,14 @@ public class Bus extends Fragment {
         listSugerenciasOrigen.setOnItemClickListener((parent, view1, position, id) -> {
             String selectedItem = adapterOrigen.getItem(position);
             inputOrigen.setText(selectedItem);
-            listSugerenciasOrigen.setVisibility(View.GONE);
+            listSugerenciasOrigen.setVisibility(GONE);
             hideKeyboard();
         });
 
         listSugerenciasDestino.setOnItemClickListener((parent, view1, position, id) -> {
             String selectedItem = adapterDestino.getItem(position);
             inputDestino.setText(selectedItem);
-            listSugerenciasDestino.setVisibility(View.GONE);
+            listSugerenciasDestino.setVisibility(GONE);
             hideKeyboard();
         });
 
@@ -133,7 +140,7 @@ public class Bus extends Fragment {
             if (hasFocus && inputOrigen.getText().length() > 0) {
                 actualizarSugerencias(inputOrigen.getText().toString(), adapterOrigen, listSugerenciasOrigen);
             } else {
-                listSugerenciasOrigen.setVisibility(View.GONE);
+                listSugerenciasOrigen.setVisibility(GONE);
             }
         });
 
@@ -141,7 +148,7 @@ public class Bus extends Fragment {
             if (hasFocus && inputDestino.getText().length() > 0) {
                 actualizarSugerencias(inputDestino.getText().toString(), adapterDestino, listSugerenciasDestino);
             } else {
-                listSugerenciasDestino.setVisibility(View.GONE);
+                listSugerenciasDestino.setVisibility(GONE);
             }
         });
 
@@ -260,18 +267,51 @@ public class Bus extends Fragment {
                 // Añadir a favoritos
                 long id = dbHelper.addFavoriteRoute(origen, destino);
                 if(id != -1) {
-                    btnFavorito.setSupportImageTintList(ColorStateList.valueOf(Color.parseColor("#FFD700")));
+                    ImageViewCompat.setImageTintList(
+                            btnFavorito,
+                            ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.favorite_gold)));
                     Log.d("FAVORITOS", "Ruta añadida a favoritos. ID: " + id);
                 }
             } else {
                 // Quitar de favoritos
                 int deleted = dbHelper.deleteFavoriteRoute(origen, destino);
                 if(deleted > 0) {
-                    btnFavorito.setSupportImageTintList(ColorStateList.valueOf(Color.parseColor("#D3D3D3"))); // Gris
+                    ImageViewCompat.setImageTintList(
+                            btnFavorito,
+                            ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.favorite_gray)));
                     Log.d("FAVORITOS", "Ruta eliminada de favoritos");
                 }
             }
         });
+
+        btnUbicacion.setOnClickListener(v -> {
+            // Verificar permisos primero
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+
+                LocationServices.getFusedLocationProviderClient(requireActivity())
+                        .getLastLocation()
+                        .addOnSuccessListener(requireActivity(), location -> {
+                            if (location != null) {
+                                double lat = location.getLatitude();
+                                double log = location.getLongitude();
+
+                                obtenerMarCercana(log, lat);
+                            } else {
+                                Toast.makeText(requireContext(),
+                                        "No se pudo obtener ubicación",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            } else {
+                // Solicitar permiso si no lo tenemos
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        1001);
+            }
+        });
+
+        cargarDatosIniciales();
+
         return view;
     }
 
@@ -282,10 +322,13 @@ public class Bus extends Fragment {
         int mes = calendario.get(Calendar.MONTH);
         int día = calendario.get(Calendar.DAY_OF_MONTH);
 
+        String tema = prefs.getString("tema", "Verde");
+        int themeId = tema.equals("Morado") ? R.style.CustomDatePickerDialog_Purple : R.style.CustomDatePickerDialog_Green;
+
         // Crear el DatePickerDialog
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 requireContext(),
-                R.style.CustomDatePickerDialog_Green,
+                themeId,
                 (view, selectedYear, selectedMonth, selectedDay) -> {
                     // Formatear la fecha seleccionada (mes + 1 porque enero es 0)
                     String fechaSeleccionada = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear;
@@ -306,11 +349,13 @@ public class Bus extends Fragment {
         int hora = calendario.get(Calendar.HOUR_OF_DAY);
         int minuto = calendario.get(Calendar.MINUTE);
 
+        String tema = prefs.getString("tema", "Verde");
+        int themeId = tema.equals("Morado") ? R.style.CustomDatePickerDialog_Purple : R.style.CustomDatePickerDialog_Green;
 
         // Crear el TimePickerDialog
         TimePickerDialog timePickerDialog = new TimePickerDialog(
                 requireContext(),
-                R.style.CustomDatePickerDialog_Green,
+                themeId,
                 (view, selectedHour, selectedMinute) -> {
                     // Formatear la hora seleccionada
                     String horaSeleccionada = String.format("%02d:%02d", selectedHour, selectedMinute);
@@ -396,6 +441,20 @@ public class Bus extends Fragment {
                     Log.d("RxJava", "Texto destino cambiado: " + text);
                     actualizarSugerencias(text, adapterDestino, listSugerenciasDestino);
                 }));
+
+        boolean favo = dbHelper.isRouteFavorite(inputOrigen.getText().toString(), inputDestino.getText().toString());
+        Log.d("BUS", "Pasa por actu");
+        if (favo) {
+            ImageViewCompat.setImageTintList(
+                    btnFavorito,
+                    ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.favorite_gold))
+            );
+        } else {
+            ImageViewCompat.setImageTintList(
+                    btnFavorito,
+                    ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.favorite_gray))
+            );
+        }
     }
 
     private void actualizarSugerencias(String busqueda, ArrayAdapter<String> adapter, ListView listView) {
@@ -447,11 +506,25 @@ public class Bus extends Fragment {
 
                     Log.d("RxJava", "ListView hecho visible con " + sugerencias.size() + " elementos");
                 } else {
-                    listView.setVisibility(View.GONE);
+                    listView.setVisibility(GONE);
                     Log.d("RxJava", "ListView ocultado");
                 }
                 adapter.notifyDataSetChanged();
             });
+        }
+
+        boolean favo = dbHelper.isRouteFavorite(inputOrigen.getText().toString(), inputDestino.getText().toString());
+        Log.d("BUS", "Pasa por actu");
+        if (favo) {
+            ImageViewCompat.setImageTintList(
+                    btnFavorito,
+                    ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.favorite_gold))
+            );
+        } else {
+            ImageViewCompat.setImageTintList(
+                    btnFavorito,
+                    ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.favorite_gray))
+            );
         }
     }
 
@@ -574,4 +647,116 @@ public class Bus extends Fragment {
         requireActivity().getResources().updateConfiguration(config, requireActivity().getResources().getDisplayMetrics());
     }
 
+    private void actualizarEstadoFavorito(String origen, String destino) {
+        boolean esFavorito = dbHelper.isRouteFavorite(origen, destino);
+        int colorResId = esFavorito ? R.color.favorite_gold : R.color.favorite_gray;
+
+        ImageViewCompat.setImageTintList(
+                btnFavorito,
+                ColorStateList.valueOf(ContextCompat.getColor(requireContext(), colorResId))
+        );
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // Verificar si hay datos en el Intent (por si el fragmento se recrea)
+        if (getActivity() != null && getActivity().getIntent() != null) {
+            Intent intent = getActivity().getIntent();
+            String origen = intent.getStringExtra("origen");
+            String destino = intent.getStringExtra("destino");
+            if (origen != null && destino != null) {
+                inputOrigen.setText(origen);
+                inputDestino.setText(destino);
+                actualizarEstadoFavorito(origen, destino);
+
+                // Limpiar los extras para que no se vuelvan a cargar
+                intent.removeExtra("origen");
+                intent.removeExtra("destino");
+            }
+        }
+
+        listSugerenciasOrigen.setVisibility(GONE);
+        listSugerenciasDestino.setVisibility(GONE);
+    }
+
+    private void obtenerMarCercana(double log, double lat) {
+        Log.d("ParCer", "Iniciando obtención de paradas...");
+        Data inputData = new Data.Builder()
+                .putString("action", "obtParadaCercana")
+                .putDouble("log", log)
+                .putDouble("lat", lat)
+                .build();
+
+        OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(DBServer.class)
+                .setInputData(inputData)
+                .build();
+
+        WorkManager.getInstance(requireContext()).getWorkInfoByIdLiveData(workRequest.getId())
+                .observe(getViewLifecycleOwner(), workInfo -> {
+                    if (workInfo != null && workInfo.getState().isFinished()) {
+                        if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
+                            String result = workInfo.getOutputData().getString("result");
+                            Log.d("ParCer", "Work request exitoso. Procesando respuesta...");
+
+                            try {
+                                // Parsear el JSON
+                                JSONObject jsonResponse = new JSONObject(result);
+                                String status = jsonResponse.getString("status");
+
+                                if ("success".equals(status)) {
+                                    JSONObject data = jsonResponse.getJSONObject("data");
+                                    String stopName = data.getString("stop_name");
+                                    Log.d("ParCer", "Nombre de la parada: " + stopName);
+                                    inputOrigen.setText(stopName);
+                                } else {
+                                    String message = jsonResponse.getString("message");
+                                    Log.e("ParCer", "Error en la respuesta: " + message);
+                                    mostrarError(message);
+                                }
+                            } catch (JSONException e) {
+                                Log.e("ParCer", "Error al parsear JSON", e);
+                                mostrarError("Error al procesar la respuesta");
+                            }
+                        } else {
+                            Log.e("ParCer", "Work request falló");
+                            mostrarError("Error al obtener paradas");
+                        }
+                    }
+                });
+
+        WorkManager.getInstance(requireContext()).enqueue(workRequest);
+    }
+
+    private void cargarDatosIniciales() {
+        String origen = null;
+        String destino = null;
+
+        // Primero verificar los argumentos del fragmento
+        if (getArguments() != null) {
+            origen = getArguments().getString("origen");
+            destino = getArguments().getString("destino");
+            Log.d("BUS", "Datos de argumentos: " + origen + " - " + destino);
+        }
+        // Si no hay argumentos, verificar el Intent de la actividad
+        else if (getActivity() != null && getActivity().getIntent() != null) {
+            Intent intent = getActivity().getIntent();
+            origen = intent.getStringExtra("origen");
+            destino = intent.getStringExtra("destino");
+            Log.d("BUS", "Datos de intent: " + origen + " - " + destino);
+
+            // Limpiar los extras para que no se vuelvan a cargar
+            intent.removeExtra("origen");
+            intent.removeExtra("destino");
+        }
+
+        // Si tenemos datos, establecerlos en los inputs
+        if (origen != null && destino != null) {
+            inputOrigen.setText(origen);
+            inputDestino.setText(destino);
+            actualizarEstadoFavorito(origen, destino);
+            Log.d("BUS", "Datos establecidos en inputs");
+        }
+    }
 }

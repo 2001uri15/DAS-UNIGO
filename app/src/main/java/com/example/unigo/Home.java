@@ -1,6 +1,7 @@
 package com.example.unigo;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -13,6 +14,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.example.unigo.fragments.Andando;
 import com.example.unigo.fragments.Bus;
@@ -76,6 +79,36 @@ public class Home extends AppCompatActivity {
                     .replace(R.id.fragment_container, new HomeFrag())
                     .commit();
         }
+
+        // Verificar si hay que cargar un fragmento específico
+        Intent intent = getIntent();
+        if (intent != null && "Bus".equals(intent.getStringExtra("fragmentToLoad"))) {
+            String origen = intent.getStringExtra("origen");
+            String destino = intent.getStringExtra("destino");
+
+            // Crear el fragmento Bus con los argumentos
+            Bus busFragment = new Bus();
+            if (origen != null && destino != null) {
+                Bundle args = new Bundle();
+                args.putString("origen", origen);
+                args.putString("destino", destino);
+                busFragment.setArguments(args);
+            }
+
+            // Cargar el fragmento
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, busFragment)
+                    .commit();
+
+            // Seleccionar el ítem correspondiente en el menú inferior
+            bottomNavigationView.setSelectedItemId(R.id.nav_bus);
+
+            // Limpiar los extras
+            intent.removeExtra("fragmentToLoad");
+            intent.removeExtra("origen");
+            intent.removeExtra("destino");
+        }
+
     }
 
     private void actualizarIdioma(){
@@ -94,5 +127,18 @@ public class Home extends AppCompatActivity {
     protected void onResume(){
         super.onResume();
         actualizarIdioma();
+    }
+
+    public void navigateToBusWithRoute(Bundle args) {
+        // Obtener NavController
+        NavController navController = Navigation.findNavController(this, R.id.fragment_container);
+
+        // Navegar al fragmento Bus con los argumentos
+        navController.navigate(R.id.nav_bus, args);
+    }
+
+    public void selectBottomNavItem(int itemId) {
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        bottomNav.setSelectedItemId(itemId);
     }
 }

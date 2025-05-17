@@ -4,16 +4,19 @@
     <item
         android:id="@+id/nav_home"
         android:icon="@drawable/icon_home"
+        android:name="com.example.unigo.fragments.HomeFrag"
         app:showAsAction="never"
         android:title="Home"/>
     <item
         android:id="@+id/nav_walking"
         android:icon="@drawable/icon_andar"
+        android:name="com.example.unigo.fragments.Andando"
         app:showAsAction="never"
         android:title="@string/andar"/>
     <item
         android:id="@+id/nav_bus"
         android:icon="@drawable/icon_bus"
+        android:name="com.example.unigo.fragments.Bus"
         app:showAsAction="never"
         android:title="@string/bus"/>
     <item
@@ -24,6 +27,7 @@
     <item
         android:id="@+id/nav_profile"
         app:showAsAction="never"
+        android:name="com.example.unigo.fragments.PerfilRegistrado"
         android:icon="@drawable/icon_perfil"
         android:title="Perfil"/>
 </menu>

@@ -1,6 +1,7 @@
 package com.example.unigo.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -17,9 +18,14 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
+import com.example.unigo.Home;
+import com.example.unigo.MainActivity;
 import com.example.unigo.R;
 import com.example.unigo.database.DBLocal;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -67,6 +73,7 @@ public class HomeFrag extends Fragment {
         weatherDescription = view.findViewById(R.id.weatherDescription);
         weatherHumidity = view.findViewById(R.id.weatherHumidity);
         weatherIcon = view.findViewById(R.id.weatherIcon);
+
 
         // Configuración inicial
         aplicarIdiomaGuardado();
@@ -271,9 +278,9 @@ public class HomeFrag extends Fragment {
     private void setWeatherIcon(String iconName) {
         int iconResId = 0;
 
-        if (iconName.contains("i01d")) {
+        if (iconName.contains("i00d")) { // Despejado
             iconResId = R.drawable.icon_despejado;
-        } else if (iconName.contains("i00d")) {
+        } else if (iconName.contains("i01d")) {
             iconResId = R.drawable.icon_chubascos_debiles;
         } else if (iconName.contains("i12d")) {
             iconResId = R.drawable.icon_lluvia_debil;
@@ -281,6 +288,10 @@ public class HomeFrag extends Fragment {
             iconResId = R.drawable.icon_poco_nublo;
         } else if (iconName.contains("i15d")) {
             iconResId = R.drawable.icon_tormenta;
+        } else if (iconName.contains("i10d")) {
+            iconResId = R.drawable.icon_chubascos_debiles;
+        } else if(iconName.contains("i04d")){ // Nubloso
+
         }
 
         if (iconResId != 0) {
@@ -299,7 +310,7 @@ public class HomeFrag extends Fragment {
 
     private void loadFavoriteRoutes() {
         if (favoritesContainer == null || getContext() == null) return;
-        favoritesContainer.removeAllViews(); // Limpiar vistas anteriores
+        favoritesContainer.removeAllViews();
 
         List<DBLocal.FavoriteRoute> favorites = dbHelper.getAllFavoriteRoutes();
 
@@ -313,11 +324,36 @@ public class HomeFrag extends Fragment {
         }
 
         for (DBLocal.FavoriteRoute route : favorites) {
-            // Crear un TextView para cada ruta
-            TextView routeView = new TextView(getContext());
+            CardView cardView = (CardView) LayoutInflater.from(getContext())
+                    .inflate(R.layout.item_favorite_route, favoritesContainer, false);
+
+            TextView routeView = cardView.findViewById(R.id.routeText);
             routeView.setText(String.format("%s → %s", route.getOrigin(), route.getDestination()));
-            routeView.setTextSize(16f);
-            routeView.setPadding(0, 8, 0, 8);
+
+            cardView.setOnClickListener(v -> {
+                // Crear un Intent para iniciar la actividad que contiene el fragmento Bus
+                Intent intent = new Intent(getActivity(), Home.class);
+
+                // Pasar los datos de la ruta como extras
+                intent.putExtra("origen", route.getOrigin());
+                intent.putExtra("destino", route.getDestination());
+
+
+                //Log.d("BUS", "FAVO"+route.getOrigin()+" "+route.getDestination());
+
+                // Indicar que queremos navegar al fragmento Bus
+                intent.putExtra("fragmentToLoad", "Bus");
+
+                // Iniciar la actividad
+                startActivity(intent);
+
+                // Cerrar la actividad actual si es necesario
+                if (getActivity() != null) {
+                    getActivity().finish();
+                }
+            });
+
+            favoritesContainer.addView(cardView);
 
             // Añadir separador entre elementos (excepto al último)
             if (favorites.indexOf(route) < favorites.size() - 1) {
@@ -329,8 +365,6 @@ public class HomeFrag extends Fragment {
                 separator.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.divider));
                 favoritesContainer.addView(separator);
             }
-
-            favoritesContainer.addView(routeView);
         }
     }
 }

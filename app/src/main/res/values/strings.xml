@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">MovGazteiz</string>
+    <string name="app_name" translatable="false">MovGasteiz</string>
     <string name="andar">Andando</string>
     <string name="bici">Bicicleta</string>
     <string name="bus">Autobus</string>

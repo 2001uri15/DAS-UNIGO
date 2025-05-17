@@ -58,6 +58,9 @@ public class DBServer extends Worker {
         String destino = getInputData().getString("destino");
         String fecha = getInputData().getString("fecha");
         String hora = getInputData().getString("hora");
+        String lat = String.valueOf(getInputData().getDouble("lat", 0));
+        String log = String.valueOf(getInputData().getDouble("log", 0));
+
 
         try {
             String result;
@@ -85,6 +88,9 @@ public class DBServer extends Worker {
                     break;
                 case "busCementerio":
                     result = buscarRutaCementerio(fecha);
+                    break;
+                case "obtParadaCercana":
+                    result = paradaCercana(log, lat);
                     break;
                 default:
                     return Result.failure(createOutputData("Error: Acción no válida"));
@@ -362,6 +368,14 @@ public class DBServer extends Worker {
         params.put("fecha", fecha);
 
         Log.d("DBServer", fecha);
+        return hacerPeticion(recuerso, params, METHOD_GET);
+    }
+
+    private String paradaCercana(String log, String lat) throws IOException{
+        String recuerso = "StopCercana.php";
+        Map<String, String> params = new HashMap<>();
+        params.put("log", log);
+        params.put("lat", lat);
         return hacerPeticion(recuerso, params, METHOD_GET);
     }
 }
