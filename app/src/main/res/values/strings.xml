@@ -3,7 +3,7 @@
     <string name="andar">Andando</string>
     <string name="bici">Bicicleta</string>
     <string name="bus">Autobus</string>
-    <string name="hello_blank_fragment" translatable="false">Fragment Andando</string>
+    <string name="hello_blank_fragment">Fragment Andando</string>
     <string name="origen">Origen</string>
     <string name="hint_origen">Introduce tu origen</string>
     <string name="destino">Destino</string>
@@ -15,6 +15,39 @@
     <string name="consultar">Consultar</string>
     <string name="bienvenido">Bienvenido</string>
     <string name="bienvenido_con_nombre">Bienvenido %s</string>
+    <string name="confi">Configuraciones</string>
+    <string name="tiemGas">Tiempo en Gasteiz</string>
+    <string name="rutasFavo">Tus rutas favoritas</string>
+    <string name="centubi">Centrar en mi ubicación</string>
+    <string name="distance_meters">Distancia: %d m</string>
+    <string name="distance_kilometers">Distancia: %.2f km</string>
+    <string name="duration">Tiempo: %s</string>
+    <string name="location_permission_title">Permiso de ubicación necesario</string>
+    <string name="location_permission_message">Para mostrar rutas a pie precisas, necesitamos acceso a tu ubicación</string>
+    <string name="understood_button">Entendido</string>
+    <string name="deny_button">Rechazar</string>
+    <string name="rutaBus">Rutas de Bus</string>
+    <string name="todasMarque">Ver todas las marquesinas</string>
+    <string name="rutaCeme">Ver rutas al cementerio</string>
+    <string name="seleFecha">Seleccione fecha</string>
+    <string name="no_routes_title">No hay rutas disponibles</string>
+    <string name="no_routes_message">No hay rutas al cementerio los %1$ss. ¿Desea ver otra fecha?</string>
+    <string name="yes_button">Sí</string>
+    <string name="no_button">No</string>
+    <string name="ingreOriDes">Ingresa origen y destino</string>
+    <string name="noubi">No se pudo obtener ubicación</string>
+    <string name="errorParadas">Error al obtener paradas</string>
+    <string name="error_empty_origin">Introduce el origen</string>
+    <string name="error_empty_destination">Introduce el destino</string>
+    <string name="error_empty_date">Introduce la fecha</string>
+    <string name="error_empty_time">Introduce la hora</string>
+    <string name="iniSesi">Iniciar sesión</string>
+    <string name="registrar">Registrarse</string>
+    <string name="noregis">Entrar sin registrarse</string>
+    <string name="bienIniSe">¡Bienvenido! Inicia sesión</string>
+    <string name="correo">Correo electrónico</string>
+    <string name="olvContra">Olvidé mi contraseña</string>
+    <string name="contra">Contraseña</string>
 
 
     <string-array name="language_options">

@@ -1,22 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name" translatable="false">MovGasteiz</string>
     <string name="andar">Walking</string>
-    <string name="bici">Bici</string>
+    <string name="bici">Bicycle</string>
     <string name="bus">Bus</string>
+    <string name="hello_blank_fragment" translatable="false">Walking Fragment</string>
     <string name="origen">Origin</string>
     <string name="hint_origen">Enter your origin</string>
     <string name="destino">Destination</string>
     <string name="hint_destino">Enter your destination</string>
     <string name="fecha_trayecto">Trip date</string>
     <string name="hora_trayecto">Trip time</string>
-    <string name="hint_fecha">mm/dd/yyyy</string>
+    <string name="hint_fecha">dd/mm/yyyy</string>
     <string name="hint_hora">hh:mm</string>
-    <string name="consultar">Search</string>
-    <string name="general">General Settings</string>
-    <string name="notifi">Notifications</string>
-    <string name="idioma">Language</string>
-    <string name="temaApp">Appearance of the APP</string>
-    <string name="cerrarsesion">Log Out</string>
+    <string name="consultar">Consult</string>
     <string name="bienvenido">Welcome</string>
     <string name="bienvenido_con_nombre">Welcome %s</string>
+    <string name="confi">Settings</string>
+    <string name="tiemGas">Weather in Gasteiz</string>
+    <string name="rutasFavo">Your favorite routes</string>
+    <string name="centubi">Center on my location</string>
+    <string name="distance_meters">Distance: %d m</string>
+    <string name="distance_kilometers">Distance: %.2f km</string>
+    <string name="duration">Time: %s</string>
+    <string name="location_permission_title">Location permission needed</string>
+    <string name="location_permission_message">To show accurate walking routes, we need access to your location</string>
+    <string name="understood_button">Understood</string>
+    <string name="deny_button">Deny</string>
+    <string name="rutaBus">Bus routes</string>
+    <string name="todasMarque">View all bus stops</string>
+    <string name="rutaCeme">View routes to the cemetery</string>
+    <string name="seleFecha">Select date</string>
+    <string name="no_routes_title">No routes available</string>
+    <string name="no_routes_message">There are no routes to the cemetery on %1$s. Would you like to see another date?</string>
+    <string name="yes_button">Yes</string>
+    <string name="no_button">No</string>
+    <string name="ingreOriDes">Enter origin and destination</string>
+    <string name="noubi">Could not get location</string>
+    <string name="errorParadas">Error getting stops</string>
+    <string name="error_empty_origin">Enter origin</string>
+    <string name="error_empty_destination">Enter destination</string>
+    <string name="error_empty_date">Enter date</string>
+    <string name="error_empty_time">Enter time</string>
+    <string name="iniSesi">Log in</string>
+    <string name="registrar">Sign up</string>
+    <string name="noregis">Continue without registering</string>
+    <string name="bienIniSe">Welcome! Log in</string>
+    <string name="correo">Email</string>
+    <string name="olvContra">Forgot password</string>
 </resources>

@@ -3,35 +3,28 @@ package com.example.unigo.fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
+
+import com.example.unigo.Configuraciones;
+import com.example.unigo.R;
+import com.example.unigo.database.DBServer;
 import androidx.work.Data;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
-import com.example.unigo.R;
-import com.example.unigo.database.DBServer;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Locale;
+import java.util.Objects;
 
 public class PerfilRegistrado extends Fragment {
 
@@ -47,8 +40,6 @@ public class PerfilRegistrado extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         prefs = requireActivity().getSharedPreferences("Usuario", Context.MODE_PRIVATE);
-        aplicarTemaGuardado();
-        aplicarIdiomaGuardado();
     }
 
     @Override
@@ -56,13 +47,20 @@ public class PerfilRegistrado extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_perfil_registrado, container, false);
 
+        boolean token = prefs.getBoolean("iniciado", false);
+
+        if(!token){
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, new PerfilInisesion())
+                    .commit();
+        }
+
         // Referencias a la vista
         TextView tvNombre = view.findViewById(R.id.tvNombre);
         TextView tvCorreo = view.findViewById(R.id.tvCorreo);
         Button btnCerrarSesion = view.findViewById(R.id.btnCerrarSesion);
-        Button btnNotificaciones = view.findViewById(R.id.btnNotificaciones);
-        Spinner spinnerIdioma = view.findViewById(R.id.spinnerIdioma);
-        Spinner spinnerTema = view.findViewById(R.id.spinnerTema);
+        Button btnConfiguraciones = view.findViewById(R.id.btnConfiguraciones);
 
         // Datos de usuario
         String nombre = prefs.getString("nombre", "Nombre");
@@ -75,53 +73,11 @@ public class PerfilRegistrado extends Fragment {
         // Cerrar sesión
         btnCerrarSesion.setOnClickListener(v -> cerrarSesion());
 
-        // Notificaciones
-        btnNotificaciones.setOnClickListener(v -> {
-            Intent intent = new Intent();
-            intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
-            intent.putExtra(Settings.EXTRA_APP_PACKAGE, requireActivity().getPackageName());
+        // Configuraciones
+        btnConfiguraciones.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), Configuraciones.class);
             startActivity(intent);
-        });
-
-        // Spinner idioma
-        ArrayAdapter<CharSequence> idiomaAdapter = ArrayAdapter.createFromResource(requireContext(),
-                R.array.language_options, android.R.layout.simple_spinner_item);
-        idiomaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerIdioma.setAdapter(idiomaAdapter);
-
-        String lang = prefs.getString("idioma", "es");
-        int pos = idiomaToPosition(lang);
-        spinnerIdioma.setSelection(pos);
-        spinnerIdioma.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String nuevoIdioma = positionToIdioma(position);
-                if (!nuevoIdioma.equals(prefs.getString("idioma", "es"))) {
-                    prefs.edit().putString("idioma", nuevoIdioma).apply();
-                    recargarFragmento();
-                    requireActivity().recreate();
-                }
-            }
-            @Override public void onNothingSelected(AdapterView<?> parent) {}
-        });
-
-        // Spinner tema
-        String[] temas = {"Verde", "Morado"};
-        ArrayAdapter<String> temaAdapter = new ArrayAdapter<>(requireContext(),
-                android.R.layout.simple_spinner_item, temas);
-        temaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerTema.setAdapter(temaAdapter);
-
-        String temaActual = prefs.getString("tema", "Verde");
-        spinnerTema.setSelection(temaActual.equals("Verde") ? 0 : 1);
-        spinnerTema.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String nuevoTema = position == 0 ? "Verde" : "Morado";
-                if (!nuevoTema.equals(temaActual)) {
-                    prefs.edit().putString("tema", nuevoTema).apply();
-                    requireActivity().recreate();
-                }
-            }
-            @Override public void onNothingSelected(AdapterView<?> parent) {}
+            requireActivity().finish();
         });
 
         return view;
@@ -171,44 +127,5 @@ public class PerfilRegistrado extends Fragment {
 
     private void showError(String message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-    }
-
-    private void aplicarIdiomaGuardado() {
-        String idioma = prefs.getString("idioma", "es");
-        Locale locale = new Locale(idioma);
-        Locale.setDefault(locale);
-        Configuration config = new Configuration();
-        config.setLocale(locale);
-        requireActivity().getResources().updateConfiguration(config, requireActivity().getResources().getDisplayMetrics());
-    }
-
-    private void aplicarTemaGuardado() {
-        String tema = prefs.getString("tema", "Verde");
-        int themeId = tema.equals("Morado") ? R.style.Theme_Vitoria_Purple : R.style.Theme_Vitoria_Green;
-        requireActivity().setTheme(themeId);
-    }
-
-    private void recargarFragmento() {
-        requireActivity().getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_container, new PerfilRegistrado())
-                .commit();
-
-    }
-
-    private int idiomaToPosition(String idioma) {
-        switch (idioma) {
-            case "eu": return 1;
-            case "en": return 2;
-            default: return 0;
-        }
-    }
-
-    private String positionToIdioma(int pos) {
-        switch (pos) {
-            case 1: return "eu";
-            case 2: return "en";
-            default: return "es";
-        }
     }
 }

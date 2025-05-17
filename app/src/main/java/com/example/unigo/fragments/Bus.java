@@ -24,6 +24,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -73,19 +74,21 @@ public class Bus extends Fragment {
     private AutoCompleteTextView inputOrigen, inputDestino;
     private EditText inputFecha, inputHora;
     private Button btnConsultar;
-    private AppCompatImageButton btnFavorito, btnUbicacion;
+    private AppCompatImageButton btnFavorito;
     private ListView listSugerenciasOrigen, listSugerenciasDestino;
     private List<Parada> paradas = new ArrayList<>();
     private CompositeDisposable disposables = new CompositeDisposable();
     private ArrayAdapter<String> adapterOrigen, adapterDestino;
     private TextView textMarquesinas, textCementerio;
-    private SharedPreferences prefs;
+    private SharedPreferences prefs, prefs2;
     private DBLocal dbHelper;
+    private ImageView btnUni, btnUbicacion;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         prefs = requireActivity().getSharedPreferences("Usuario", Context.MODE_PRIVATE);
+        prefs2 = requireActivity().getSharedPreferences("Ajustes", Context.MODE_PRIVATE);
         aplicarIdiomaGuardado();
         View view = inflater.inflate(R.layout.fragment_bus, container, false);
 
@@ -101,6 +104,8 @@ public class Bus extends Fragment {
         textCementerio = view.findViewById(R.id.textCementerio);
         btnFavorito = view.findViewById(R.id.btnFavorito);
         btnUbicacion = view.findViewById(R.id.btnUbicacion);
+        btnUni = view.findViewById(R.id.btnUni);
+
 
         dbHelper = new DBLocal(getContext());
 
@@ -195,7 +200,7 @@ public class Bus extends Fragment {
         textCementerio.setOnClickListener(v -> {
             // Crear diálogo para seleccionar fecha
             MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
-                    .setTitleText("Seleccione fecha")
+                    .setTitleText(R.string.seleFecha)
                     .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
                     .build();
 
@@ -240,10 +245,11 @@ public class Bus extends Fragment {
                     }
 
                     new AlertDialog.Builder(getContext())
-                            .setTitle("No hay rutas disponibles")
-                            .setMessage("No hay rutas al cementerio los " + dayName + "s. ¿Desea ver otra fecha?")
-                            .setPositiveButton("Sí", (dialog, which) -> datePicker.show(getParentFragmentManager(), "DATE_PICKER"))
-                            .setNegativeButton("No", null)
+                            .setTitle(R.string.no_routes_title)
+                            .setMessage(getString(R.string.no_routes_message, dayName))
+                            .setPositiveButton(R.string.yes_button, (dialog, which) ->
+                                    datePicker.show(getParentFragmentManager(), "DATE_PICKER"))
+                            .setNegativeButton(R.string.no_button, null)
                             .show();
                 }
             });
@@ -257,7 +263,7 @@ public class Bus extends Fragment {
             String destino = inputDestino.getText().toString();
 
             if(origen.isEmpty() || destino.isEmpty()) {
-                Toast.makeText(getContext(), "Ingresa origen y destino", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.ingreOriDes, Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -299,7 +305,7 @@ public class Bus extends Fragment {
                                 obtenerMarCercana(log, lat);
                             } else {
                                 Toast.makeText(requireContext(),
-                                        "No se pudo obtener ubicación",
+                                        R.string.noubi,
                                         Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -308,6 +314,10 @@ public class Bus extends Fragment {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         1001);
             }
+        });
+
+        btnUni.setOnClickListener(v-> {
+            inputDestino.setText("Unibertsitatea");
         });
 
         cargarDatosIniciales();
@@ -547,7 +557,7 @@ public class Bus extends Fragment {
                             procesarRespuesta(result);
                         } else {
                             Log.e("RxJava", "Work request falló");
-                            mostrarError("Error al obtener paradas");
+                            mostrarError(String.valueOf(R.string.errorParadas));
                         }
                     }
                 });
@@ -573,7 +583,7 @@ public class Bus extends Fragment {
             Log.d("RxJava", "Total paradas cargadas: " + paradas.size());
 
         } catch (JSONException e) {
-            mostrarError("Error al procesar respuesta");
+            mostrarError(String.valueOf(R.string.errorParadas));
             Log.e("BusFragment", "Error JSON: " + e.getMessage());
         }
     }
@@ -598,25 +608,25 @@ public class Bus extends Fragment {
         String hora = inputHora.getText().toString().trim();
 
         if (TextUtils.isEmpty(origen)) {
-            inputOrigen.setError("Introduce el origen");
+            inputOrigen.setError(getString(R.string.error_empty_origin));
             inputOrigen.requestFocus();
             return;
         }
 
         if (TextUtils.isEmpty(destino)) {
-            inputDestino.setError("Introduce el destino");
+            inputDestino.setError(getString(R.string.error_empty_destination));
             inputDestino.requestFocus();
             return;
         }
 
         if (TextUtils.isEmpty(fecha)) {
-            inputFecha.setError("Introduce la fecha");
+            inputFecha.setError(getString(R.string.error_empty_date));
             inputFecha.requestFocus();
             return;
         }
 
         if (TextUtils.isEmpty(hora)) {
-            inputHora.setError("Introduce la hora");
+            inputHora.setError(getString(R.string.error_empty_time));
             inputHora.requestFocus();
             return;
         }
@@ -639,7 +649,7 @@ public class Bus extends Fragment {
     }
 
     private void aplicarIdiomaGuardado() {
-        String idioma = prefs.getString("idioma", "es");
+        String idioma = prefs2.getString("idioma", "es");
         Locale locale = new Locale(idioma);
         Locale.setDefault(locale);
         Configuration config = new Configuration();
@@ -661,21 +671,21 @@ public class Bus extends Fragment {
     public void onResume() {
         super.onResume();
 
-        // Verificar si hay datos en el Intent (por si el fragmento se recrea)
-        if (getActivity() != null && getActivity().getIntent() != null) {
-            Intent intent = getActivity().getIntent();
-            String origen = intent.getStringExtra("origen");
-            String destino = intent.getStringExtra("destino");
-            if (origen != null && destino != null) {
-                inputOrigen.setText(origen);
-                inputDestino.setText(destino);
-                actualizarEstadoFavorito(origen, destino);
-
-                // Limpiar los extras para que no se vuelvan a cargar
-                intent.removeExtra("origen");
-                intent.removeExtra("destino");
-            }
-        }
+//        // Verificar si hay datos en el Intent (por si el fragmento se recrea)
+//        if (getActivity() != null && getActivity().getIntent() != null) {
+//            Intent intent = getActivity().getIntent();
+//            String origen = intent.getStringExtra("origen");
+//            String destino = intent.getStringExtra("destino");
+//            if (origen != null && destino != null) {
+//                inputOrigen.setText(origen);
+//                inputDestino.setText(destino);
+//                actualizarEstadoFavorito(origen, destino);
+//
+//                // Limpiar los extras para que no se vuelvan a cargar
+//                intent.removeExtra("origen");
+//                intent.removeExtra("destino");
+//            }
+//        }
 
         listSugerenciasOrigen.setVisibility(GONE);
         listSugerenciasDestino.setVisibility(GONE);

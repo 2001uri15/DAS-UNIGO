@@ -47,9 +47,9 @@ import okhttp3.Response;
 public class HomeFrag extends Fragment {
 
     private TextView welcomeText;
-    private TextView weatherCurrentTemp, weatherMinMaxTemp, weatherDescription, weatherHumidity;
+    private TextView weatherCurrentTemp, weatherMinMaxTemp;
     private ImageView weatherIcon;
-    private SharedPreferences prefs;
+    private SharedPreferences prefs, prefs2;
     private final OkHttpClient client = new OkHttpClient();
     private Call currentCall;
     private LinearLayout favoritesContainer;
@@ -58,20 +58,19 @@ public class HomeFrag extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflar la vista PRIMERO
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
-
         // Inicializar dbHelper y prefs
         dbHelper = new DBLocal(getContext());
         prefs = requireActivity().getSharedPreferences("Usuario", Context.MODE_PRIVATE);
+        prefs2 = requireActivity().getSharedPreferences("Ajustes", Context.MODE_PRIVATE);
+
+        // Inflar la vista PRIMERO
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         // Inicializar vistas
         favoritesContainer = view.findViewById(R.id.favoritesContainer);
         welcomeText = view.findViewById(R.id.welcomeText);
         weatherCurrentTemp = view.findViewById(R.id.weatherCurrentTemp);
         weatherMinMaxTemp = view.findViewById(R.id.weatherMinMaxTemp);
-        weatherDescription = view.findViewById(R.id.weatherDescription);
-        weatherHumidity = view.findViewById(R.id.weatherHumidity);
         weatherIcon = view.findViewById(R.id.weatherIcon);
 
 
@@ -92,6 +91,7 @@ public class HomeFrag extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         fetchWeatherData();
         loadFavoriteRoutes();
+        getTemperature();
     }
 
     @Override
@@ -241,7 +241,6 @@ public class HomeFrag extends Fragment {
             safeRunOnUiThread(() -> {
                 if (isAdded() && getView() != null) {
                     weatherMinMaxTemp.setText(minMaxText);
-                    weatherHumidity.setText(weatherText);
                     setWeatherIcon(iconName);
                 }
             });
@@ -258,21 +257,90 @@ public class HomeFrag extends Fragment {
         }
     }
 
-    private double getCurrentTemperature(JSONObject todayWeather, int currentHour) throws JSONException {
-        if (todayWeather.has("hourlyData")) {
-            JSONArray hourlyData = todayWeather.getJSONArray("hourlyData");
-            for (int i = 0; i < hourlyData.length(); i++) {
-                JSONObject hourData = hourlyData.getJSONObject(i);
-                if (hourData.getInt("hour") == currentHour && hourData.has("temperature")) {
-                    return hourData.getDouble("temperature");
+    private void getTemperature() {
+        // Get current date in required formats
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat apiDateFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
+        SimpleDateFormat apiDateParamFormat = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
+
+        String formattedDate = apiDateFormat.format(calendar.getTime());
+        String formattedDateParam = apiDateParamFormat.format(calendar.getTime());
+
+        String url = "https://api.euskadi.eus/euskalmet/weather/regions/basque_country/zones/vitoria_gasteiz" +
+                "/locations/gasteiz/forecast/at/" + formattedDate + "/for/" + formattedDateParam;
+
+        Log.d("BilbaoWeatherAPI", "Request URL: " + url);
+
+        Request request = new Request.Builder()
+                .url(url)
+                .addHeader("Authorization", "Bearer " + "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJtZXQwMS5hcGlrZXkiLCJpc3MiOiJtaUFwbGljYWNpb24iLCJleHAiOjE5MDUwMDM1NTEsImlhdCI6MTc0NzMyMzU1MSwidmVyc2lvbiI6IjEuMC4wIiwiZW1haWwiOiJpay5hc2llcmxhcnJhemFiYWxAZ21haWwuY29tIiwibG9naW5JZCI6ImJjNjdjYTA3NzY0ZDEyN2NhMDllZTQ0OWY5MTVjNTQ4ODAyOWRmMDNkMDgzZTZjYTNmM2RhMDk3NTczYjU5N2UifQ.IBzAaAFVBOwGcy2-qjAcrLAVmuNeUnmblYX3PucqMsrUF1eajYWrtfNa2vlothoUOqG6LftJXulG92ATuKAy5jj4649eOfIvpyV22e2o52ZvzQNaka9dvLYOGlPSKM8GGOu0VMxXEK1yAGahIVNkzDxc2L0ZvtKxdEx1NrjaNDKvmOWuGEJtn3yG1YXwRSMpVYy1AB4emv-09pLle3g8f9jgeFthqa0ma6gczlUFqifsLo_c1n2m8Q5h_A2kWbkUA2Dn40HAtOSfEhC3U5D99Wxnaf6ZWUjSfgcYsksTqEHzRLlvT0n4Up4rWZuh7qRPxGrJ7oy8WTCBINeJYmDL5g")
+                .build();
+
+        currentCall = client.newCall(request);
+        currentCall.enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                if (call.isCanceled()) return;
+                Log.e("BilbaoWeatherAPI", "Request failed", e);
+                safeRunOnUiThread(() -> {
+                    if (isAdded() && getContext() != null) {
+                        Toast.makeText(getContext(), "Error al obtener datos del tiempo de Bilbao", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (call.isCanceled()) return;
+
+                if (!response.isSuccessful()) {
+                    handleError("HTTP error: " + response.code());
+                    return;
+                }
+
+                try {
+                    String responseData = response.body().string();
+                    Log.d("BilbaoWeatherAPI", "Raw response: " + responseData);
+
+                    JSONObject json = new JSONObject(responseData);
+
+                    if (!json.has("temperature")) {
+                        handleError("No temperature data in response");
+                        return;
+                    }
+
+                    JSONObject temperature = json.getJSONObject("temperature");
+                    if (!temperature.has("value")) {
+                        handleError("No temperature value in response");
+                        return;
+                    }
+
+                    double currentTemp = temperature.getDouble("value");
+
+                    safeRunOnUiThread(() -> {
+                        if (isAdded() && getContext() != null) {
+                            weatherCurrentTemp.setText(String.format(Locale.getDefault(), "%.1f°C", currentTemp));
+                        }
+                    });
+
+                } catch (JSONException e) {
+                    handleError("Invalid JSON format: " + e.getMessage());
+                } catch (Exception e) {
+                    handleError("Unexpected error: " + e.getMessage());
                 }
             }
-        }
 
-        JSONObject tempRange = todayWeather.getJSONObject("temperatureRange");
-        double minTemp = tempRange.getDouble("min");
-        double maxTemp = tempRange.getDouble("max");
-        return (minTemp + maxTemp) / 2;
+            private void handleError(String message) {
+                Log.e("BilbaoWeatherAPI", message);
+                safeRunOnUiThread(() -> {
+                    if (isAdded() && getContext() != null) {
+                        Toast.makeText(getContext(),
+                                "Error obteniendo datos del tiempo de Bilbao",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
     }
 
     private void setWeatherIcon(String iconName) {
@@ -300,7 +368,7 @@ public class HomeFrag extends Fragment {
     }
 
     private void aplicarIdiomaGuardado() {
-        String idioma = prefs.getString("idioma", "es");
+        String idioma = prefs2.getString("idioma", "es");
         Locale locale = new Locale(idioma);
         Locale.setDefault(locale);
         Configuration config = new Configuration();

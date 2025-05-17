@@ -216,12 +216,16 @@ public class BusRutas extends Fragment {
 
                                 } else {
                                     showError(response.getString("message"));
+                                    txtNoRutas.setVisibility(View.VISIBLE);
+                                    txtNoRutas.setText("No hay ninuna ruta.");
                                 }
                             } catch (JSONException e) {
                                 showError("Error al procesar la respuesta");
                             }
                         } else {
                             showError(workInfo.getOutputData().getString("result"));
+                            txtNoRutas.setVisibility(View.VISIBLE);
+                            txtNoRutas.setText("No hay ninuna ruta.");
                         }
                     }
                 });

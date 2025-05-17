@@ -2,8 +2,10 @@ package com.example.unigo.fragments;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
@@ -84,6 +86,7 @@ public class Andando extends Fragment implements OnMapReadyCallback, GoogleMap.O
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        aplicarIdiomaGuardado();
         View view = inflater.inflate(R.layout.fragment_andando, container, false);
 
         // Initialize views
@@ -148,12 +151,12 @@ public class Andando extends Fragment implements OnMapReadyCallback, GoogleMap.O
 
     private void showPermissionExplanationDialog() {
         new AlertDialog.Builder(requireContext())
-                .setTitle("Permiso de ubicación necesario")
-                .setMessage("Para mostrar rutas a pie precisas, necesitamos acceso a tu ubicación")
-                .setPositiveButton("Entendido", (dialog, which) ->
+                .setTitle(R.string.location_permission_title)
+                .setMessage(R.string.location_permission_message)
+                .setPositiveButton(R.string.understood_button, (dialog, which) ->
                         requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                                 REQUEST_LOCATION_PERMISSION))
-                .setNegativeButton("Rechazar", null)
+                .setNegativeButton(R.string.deny_button, null)
                 .show();
     }
 
@@ -340,10 +343,16 @@ public class Andando extends Fragment implements OnMapReadyCallback, GoogleMap.O
 
     private void updateRouteInfo(com.google.maps.model.DirectionsLeg leg) {
         String distanceText = leg.distance.inMeters < 1000 ?
-                String.format(Locale.getDefault(), "Distancia: %d m", leg.distance.inMeters) :
-                String.format(Locale.getDefault(), "Distancia: %.2f km", leg.distance.inMeters / 1000.0);
+                String.format(Locale.getDefault(),
+                        getContext().getString(R.string.distance_meters),
+                        leg.distance.inMeters) :
+                String.format(Locale.getDefault(),
+                        getContext().getString(R.string.distance_kilometers),
+                        leg.distance.inMeters / 1000.0);
 
-        String durationText = "Tiempo: " + leg.duration.humanReadable;
+        String durationText = String.format(
+                getContext().getString(R.string.duration),
+                leg.duration.humanReadable);
 
         tvDistance.setText(distanceText);
         tvDuration.setText(durationText);
@@ -444,5 +453,15 @@ public class Andando extends Fragment implements OnMapReadyCallback, GoogleMap.O
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
+    }
+
+    private void aplicarIdiomaGuardado() {
+        SharedPreferences prefs2 = requireActivity().getSharedPreferences("Ajustes", Context.MODE_PRIVATE);
+        String idioma = prefs2.getString("idioma", "es");
+        Locale locale = new Locale(idioma);
+        Locale.setDefault(locale);
+        Configuration config = new Configuration();
+        config.setLocale(locale);
+        requireActivity().getResources().updateConfiguration(config, requireActivity().getResources().getDisplayMetrics());
     }
 }

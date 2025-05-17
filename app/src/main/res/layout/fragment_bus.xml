@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="30dp"
-            android:text="Rutas de Bus"
+            android:text="@string/rutaBus"
             android:textColor="?attr/colorPrimary"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -86,14 +86,34 @@
             android:textSize="16sp"
             android:layout_marginBottom="4dp"/>
 
-        <androidx.appcompat.widget.AppCompatAutoCompleteTextView
-            android:id="@+id/inputDestino"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:hint="@string/hint_destino"
-            android:background="@drawable/edittext_background"
-            android:paddingStart="16dp"
-            android:layout_marginBottom="16dp"/>
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp">
+
+            <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                android:id="@+id/inputDestino"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:hint="@string/hint_destino"
+                android:background="@drawable/edittext_background"
+                android:paddingStart="16dp"
+                android:paddingEnd="48dp"/>
+
+            <!-- Nuevo ImageButton para Destino -->
+            <ImageButton
+                android:id="@+id/btnUni"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="12dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="6dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/icon_uni"
+                app:tint="?attr/colorPrimary" />
+        </RelativeLayout>
 
         <!-- ListView para sugerencias de Destino -->
         <ListView
@@ -214,13 +234,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
-            android:text="Ver todas las marquesinas" />
+            android:text="@string/todasMarque" />
 
         <TextView
             android:id="@+id/textCementerio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Ver rutas al cementerio" />
+            android:text="@string/rutaCeme" />
     </LinearLayout>
 </ScrollView>

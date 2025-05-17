@@ -75,7 +75,7 @@
             android:layout_weight="1"
             android:background="@drawable/rounded_button"
             android:backgroundTint="@color/colorPrimary"
-            android:text="Iniciar sesión"
+            android:text="@string/iniSesi"
             android:textAllCaps="false"
             android:textColor="@color/white" />
 
@@ -87,7 +87,7 @@
             android:layout_weight="1"
             android:background="@drawable/rounded_button_alt"
             android:backgroundTint="@color/colorAccent"
-            android:text="Registrarse"
+            android:text="@string/registrar"
             android:textAllCaps="false"
             android:textColor="@color/white" />
     </LinearLayout>
@@ -97,7 +97,7 @@
         android:id="@+id/btnHome"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
-        android:text="Entrar sin registrarse"
+        android:text="@string/noregis"
         android:textAllCaps="false"
         android:textColor="?attr/colorPrimary"
         android:layout_marginTop="32dp"

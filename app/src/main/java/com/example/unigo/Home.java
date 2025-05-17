@@ -18,6 +18,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.unigo.fragments.Andando;
+import com.example.unigo.fragments.Bici;
 import com.example.unigo.fragments.Bus;
 import com.example.unigo.fragments.HomeFrag;
 import com.example.unigo.fragments.PerfilRegistrado;
@@ -34,7 +35,7 @@ public class Home extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         actualizarIdioma(); // Actualizamos el idioma
-        SharedPreferences prefsIni = getSharedPreferences("Usuario", Context.MODE_PRIVATE);
+        SharedPreferences prefsIni = getSharedPreferences("Ajustes", Context.MODE_PRIVATE);
         String tema = prefsIni.getString("tema", "Verde");
         int themeId = tema.equals("Morado") ? R.style.Theme_Vitoria_Purple : R.style.Theme_Vitoria_Green;
         setTheme(themeId);
@@ -57,7 +58,7 @@ public class Home extends AppCompatActivity {
                 } else if (itemId == R.id.nav_bus) {
                     selectedFragment = new Bus();
                 } else if (itemId == R.id.nav_bizi) {
-                    //selectedFragment = new Bici();
+                    selectedFragment = new Bici();
                 } else if (itemId == R.id.nav_profile) {
                     selectedFragment = new PerfilRegistrado();
                 }

@@ -12,12 +12,13 @@
         android:id="@+id/fabMyLocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="100dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="24dp"
+        android:layout_marginBottom="78dp"
+        android:contentDescription="@string/centubi"
         android:src="@drawable/icon_ubi"
-        android:tint="@android:color/white"
-        android:contentDescription="Centrar en mi ubicación" />
+        android:tint="@android:color/white" />
 
     <LinearLayout
         android:id="@+id/route_info_container"
