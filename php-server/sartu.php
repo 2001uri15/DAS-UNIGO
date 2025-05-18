@@ -7,6 +7,10 @@ $username = "Xalarrazabal025";
 $password = "vRN7UMCCFV"; 
 $dbname = "Xalarrazabal025_unigo"; 
 
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+
 $conn = new mysqli($servername, $username, $password, $dbname);
 
 // Verificar la conexión
@@ -21,13 +25,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $mail = $_POST['mail'] ?? '';
     $password = $_POST['password'] ?? '';
 
-    if (empty($username) || empty($password)) {
-        echo json_encode(["status" => "error", "message" => "Campos vacíos"]);
-        exit();
+    if (empty($mail) || empty($password)) {
+    	echo json_encode(["status" => "error", "message" => "Campos vacíos"]);
+	exit();
     }
 
     // Consultar usuario
-    $stmt = $conn->prepare("SELECT id, nombre, apellido, mail, contra, foto FROM Xalarrazabal025_usuarios WHERE mail = ?");
+    $stmt = $conn->prepare("SELECT id, nombre, apellidos, mail, contra FROM app_user WHERE mail = ?");
     $stmt->bind_param("s", $mail);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -36,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $row = $result->fetch_assoc();
         $userId = $row['id'];
         $nombre = $row['nombre'];
-        $apellido = $row['apellido'];
+        $apellido = $row['apellidos'];
         $mail = $row['mail'];
         $hashedPassword = $row['contra'];
 
@@ -46,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $token = bin2hex(random_bytes(32));
 
             // Insertar token (fecha se autogenera)
-            $stmt_token = $conn->prepare("INSERT INTO Xalarrazabal025_user_app (idUser, token) VALUES (?, ?)");
+            $stmt_token = $conn->prepare("INSERT INTO app_token (idUser, token) VALUES (?, ?)");
             $stmt_token->bind_param("is", $userId, $token);
 
             if ($stmt_token->execute()) {

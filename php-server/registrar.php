@@ -7,6 +7,11 @@ $username = "Xalarrazabal025";
 $password = "vRN7UMCCFV"; 
 $dbname = "Xalarrazabal025_unigo"; 
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+
 $conn = new mysqli($servername, $username, $password, $dbname);
 
 // Verificar conexión
@@ -45,7 +50,7 @@ if ($stmt_check->num_rows > 0) {
 $stmt_check->close();
 
 // Insertar nuevo usuario (sin foto)
-$stmt_insert = $conn->prepare("INSERT INTO Xalarrazabal025_usuarios (nombre, apellido, mail, contra) VALUES (?, ?, ?, ?)");
+$stmt_insert = $conn->prepare("INSERT INTO app_user (nombre, apellidos, mail, contra) VALUES (?, ?, ?, ?)");
 $hashedPassword = md5($contrasena);  // Para más seguridad: usar password_hash()
 $stmt_insert->bind_param("ssss", $nombre, $apellido, $mail, $hashedPassword);
 
