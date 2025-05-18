@@ -141,35 +141,7 @@ public class Sartu extends AppCompatActivity {
                 .observe(this, workInfo -> {
                     if (workInfo != null && workInfo.getState().isFinished()) {
                         if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
-                            try {
-                                JSONObject response = new JSONObject(workInfo.getOutputData().getString("result"));
-
-                                if (response.getString("status").equals("success")) {
-                                    // Cogemos la info de JSON de la respuesta
-                                    String token = response.getString("token");
-                                    String nombre2 = response.getString("nombre");
-                                    String apellido2 = response.getString("apellido");
-                                    String mail2 = response.getString("mail");
-
-                                    // Guardar datos de sesión (usando SharedPreferences, por ejemplo)
-                                    SharedPreferences prefs2 = getSharedPreferences("Usuario", MODE_PRIVATE);
-                                    SharedPreferences.Editor editor = prefs2.edit();
-                                    editor.putBoolean("iniciado", true);
-                                    editor.putString("token", token);
-                                    editor.putString("nombre", nombre2);
-                                    editor.putString("apellido", apellido2);
-                                    editor.putString("mail", mail2);
-                                    editor.apply();
-
-                                    // Redirigir al main activity
-                                    startActivity(new Intent(this, Home.class));
-                                    finish();
-                                } else {
-                                    showError(response.getString("message"));
-                                }
-                            } catch (JSONException e) {
-                                showError("Error al procesar la respuesta");
-                            }
+                            Toast.makeText(this, "Revisa el correo electrónico", Toast.LENGTH_SHORT).show();
                         } else {
                             showError(workInfo.getOutputData().getString("result"));
                         }
