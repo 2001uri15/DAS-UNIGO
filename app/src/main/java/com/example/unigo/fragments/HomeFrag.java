@@ -19,14 +19,13 @@ import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
 import com.example.unigo.Home;
 import com.example.unigo.MainActivity;
 import com.example.unigo.R;
 import com.example.unigo.database.DBLocal;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -221,26 +220,14 @@ public class HomeFrag extends Fragment {
     private void updateWeatherUI(JSONObject todayWeather) {
         try {
             JSONObject tempRange = todayWeather.getJSONObject("temperatureRange");
-            double minTemp = tempRange.getDouble("min");
-            double maxTemp = tempRange.getDouble("max");
 
             JSONObject weather = todayWeather.getJSONObject("weather");
             String iconUrl = weather.getString("url");
             String iconName = iconUrl.substring(iconUrl.lastIndexOf('/') + 1);
 
-            JSONObject nameByLang = weather.getJSONObject("nameByLang");
-            String weatherName = nameByLang.getString("SPANISH");
-
-            JSONObject descByLang = weather.getJSONObject("descriptionByLang");
-            String weatherDesc = descByLang.getString("SPANISH");
-
-            String minMaxText = String.format(Locale.getDefault(),
-                    "Mín: %.1f°C / Máx: %.1f°C", minTemp, maxTemp);
-            String weatherText = weatherName;
-
             safeRunOnUiThread(() -> {
                 if (isAdded() && getView() != null) {
-                    weatherMinMaxTemp.setText(minMaxText);
+                    //weatherMinMaxTemp.setText(minMaxText);
                     setWeatherIcon(iconName);
                 }
             });
@@ -315,11 +302,27 @@ public class HomeFrag extends Fragment {
                         return;
                     }
 
+                    JSONObject temperatureRange = json.getJSONObject("temperatureRange");
+                    if (!temperatureRange.has("min")) {
+                        handleError("No temperature value in response");
+                        return;
+                    }
+
+                    if (!temperatureRange.has("max")) {
+                        handleError("No temperature value in response");
+                        return;
+                    }
+
                     double currentTemp = temperature.getDouble("value");
+                    double min = temperatureRange.getDouble("min");
+                    double max = temperatureRange.getDouble("max");
 
                     safeRunOnUiThread(() -> {
                         if (isAdded() && getContext() != null) {
                             weatherCurrentTemp.setText(String.format(Locale.getDefault(), "%.1f°C", currentTemp));
+                            String minMaxText = String.format(Locale.getDefault(),
+                                    "Mín: %.1f°C / Máx: %.1f°C", min, max);
+                            weatherMinMaxTemp.setText(minMaxText);
                         }
                     });
 
@@ -399,37 +402,30 @@ public class HomeFrag extends Fragment {
             routeView.setText(String.format("%s → %s", route.getOrigin(), route.getDestination()));
 
             cardView.setOnClickListener(v -> {
-                // Crear un Intent para iniciar la actividad que contiene el fragmento Bus
-                Intent intent = new Intent(getActivity(), Home.class);
-
-                // Pasar los datos de la ruta como extras
-                intent.putExtra("origen", route.getOrigin());
-                intent.putExtra("destino", route.getDestination());
-
-
-                //Log.d("BUS", "FAVO"+route.getOrigin()+" "+route.getDestination());
-
-                // Indicar que queremos navegar al fragmento Bus
-                intent.putExtra("fragmentToLoad", "Bus");
-
-                // Iniciar la actividad
-                startActivity(intent);
-
-                // Cerrar la actividad actual si es necesario
-                if (getActivity() != null) {
-                    getActivity().finish();
-                }
+                // Usar el NavController de la actividad
+//                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
+//
+//                // Crear bundle con los datos
+//                Bundle args = new Bundle();
+//                args.putString("origen", route.getOrigin());
+//                args.putString("destino", route.getDestination());
+//
+//                // Navegar al fragmento Bus
+//                navController.navigate(R.id.action_homeFrag_to_bus, args);
+//
+//                // Seleccionar el ítem correspondiente en el BottomNavigationView
+//                if (getActivity() instanceof Home) {
+//                    ((Home) getActivity()).selectBottomNavItem(R.id.nav_bus);
+//                }
             });
 
             favoritesContainer.addView(cardView);
 
-            // Añadir separador entre elementos (excepto al último)
+            // Añadir separador si no es el último elemento
             if (favorites.indexOf(route) < favorites.size() - 1) {
                 View separator = new View(getContext());
                 separator.setLayoutParams(new LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        1
-                ));
+                        ViewGroup.LayoutParams.MATCH_PARENT, 1));
                 separator.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.divider));
                 favoritesContainer.addView(separator);
             }

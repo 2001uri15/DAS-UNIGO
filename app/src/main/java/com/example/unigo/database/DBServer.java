@@ -34,6 +34,8 @@ import java.util.stream.Collectors;
 
 import javax.net.ssl.SSLHandshakeException;
 
+import retrofit2.http.POST;
+
 public class DBServer extends Worker {
     private static final String BASE_URL = "http://ec2-51-44-167-78.eu-west-3.compute.amazonaws.com/alarrazabal025/WEB/";
     private static final String TAG = "DBServer";
@@ -91,6 +93,9 @@ public class DBServer extends Worker {
                     break;
                 case "obtParadaCercana":
                     result = paradaCercana(log, lat);
+                    break;
+                case "guardarFCM":
+                    result = guardarFCM(tokenFCM);
                     break;
                 default:
                     return Result.failure(createOutputData("Error: Acción no válida"));
@@ -377,5 +382,12 @@ public class DBServer extends Worker {
         params.put("log", log);
         params.put("lat", lat);
         return hacerPeticion(recuerso, params, METHOD_GET);
+    }
+
+    private String guardarFCM(String tokenFCM) throws IOException{
+        String recuerso = "guardarFCM.php";
+        Map<String, String> params = new HashMap<>();
+        params.put("tokenFCM", tokenFCM);
+        return hacerPeticion(recuerso, params, METHOD_POST);
     }
 }

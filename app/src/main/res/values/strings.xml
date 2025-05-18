@@ -48,6 +48,16 @@
     <string name="correo">Correo electrónico</string>
     <string name="olvContra">Olvidé mi contraseña</string>
     <string name="contra">Contraseña</string>
+    <string name="duration_minutes">%d min</string>
+    <string name="duration_hours_minutes">%d h %d min</string>
+    <string name="route_calculation_error">Error al calcular ruta: %s</string>
+    <string name="no_bike_route_found">No se encontró ruta para bicicleta</string>
+    <string name="loading_routes_error">Error al cargar rutas: %s</string>
+    <string name="waiting_for_location">Esperando ubicación actual…</string>
+    <string name="location_unavailable">Ubicación no disponible</string>
+    <string name="using_default_location">Usando ubicación predeterminada</string>
+    <string name="permission_denied_message">Permiso denegado. Usando ubicación predeterminada</string>
+
 
 
     <string-array name="language_options">

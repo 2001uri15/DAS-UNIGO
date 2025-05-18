@@ -48,12 +48,12 @@ public class FCMNoti extends FirebaseMessagingService{
         notificationManager.createNotificationChannel(channel);
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId)
-                .setSmallIcon(R.drawable.icon_andar) // Icono IMPORTANTE
+                .setSmallIcon(R.drawable.icon_app) // Icono IMPORTANTE
                 .setContentTitle(title)
                 .setContentText(body)
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setColor(ContextCompat.getColor(this, R.color.colorPrimaryDark)); // Color del icono
+                .setColor(ContextCompat.getColor(this, R.color.green_light)); // Color del icono
 
         // Manejar click en la notificación
         Intent intent = new Intent(this, Home.class); // Cambia a tu actividad principal

@@ -61,7 +61,7 @@
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/icon_tranvia" />
+            android:resource="@drawable/icon_app" />
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyBwSROT6QsxrNzDeEJ5XqD5xC-5oJvhSDY" />

@@ -48,6 +48,11 @@ public class DBInfoPesada {
         hacerPeticionAsync(recurso, new HashMap<>(), callback, false); // Using GET by default
     }
 
+    public void obtRutaBici(ApiCallback callback) {
+        String recurso = "obtRutaBici.php";
+        hacerPeticionAsync(recurso, new HashMap<>(), callback, false); // Using GET by default
+    }
+
     private void hacerPeticionAsync(String endpoint, Map<String, String> params, ApiCallback callback, boolean usePost) {
         new Thread(() -> {
             try {

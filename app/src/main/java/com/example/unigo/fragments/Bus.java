@@ -322,6 +322,7 @@ public class Bus extends Fragment {
 
         cargarDatosIniciales();
 
+
         return view;
     }
 
@@ -740,33 +741,16 @@ public class Bus extends Fragment {
     }
 
     private void cargarDatosIniciales() {
-        String origen = null;
-        String destino = null;
+        Bundle args = getArguments();
+        if (args != null) {
+            String origen = args.getString("origen");
+            String destino = args.getString("destino");
 
-        // Primero verificar los argumentos del fragmento
-        if (getArguments() != null) {
-            origen = getArguments().getString("origen");
-            destino = getArguments().getString("destino");
-            Log.d("BUS", "Datos de argumentos: " + origen + " - " + destino);
-        }
-        // Si no hay argumentos, verificar el Intent de la actividad
-        else if (getActivity() != null && getActivity().getIntent() != null) {
-            Intent intent = getActivity().getIntent();
-            origen = intent.getStringExtra("origen");
-            destino = intent.getStringExtra("destino");
-            Log.d("BUS", "Datos de intent: " + origen + " - " + destino);
-
-            // Limpiar los extras para que no se vuelvan a cargar
-            intent.removeExtra("origen");
-            intent.removeExtra("destino");
-        }
-
-        // Si tenemos datos, establecerlos en los inputs
-        if (origen != null && destino != null) {
-            inputOrigen.setText(origen);
-            inputDestino.setText(destino);
-            actualizarEstadoFavorito(origen, destino);
-            Log.d("BUS", "Datos establecidos en inputs");
+            if (origen != null && destino != null) {
+                inputOrigen.setText(origen);
+                inputDestino.setText(destino);
+                actualizarEstadoFavorito(origen, destino);
+            }
         }
     }
 }

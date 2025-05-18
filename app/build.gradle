@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -43,6 +44,8 @@ dependencies {
     androidTestImplementation libs.espresso.core
     implementation 'com.google.android.material:material:1.5.0'
     implementation 'androidx.fragment:fragment:1.4.1'
+    implementation 'androidx.navigation:navigation-fragment:2.5.3'
+    implementation 'androidx.navigation:navigation-ui:2.5.3'
     // RxJava
     implementation 'io.reactivex.rxjava3:rxjava:3.0.12'
     implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
@@ -61,13 +64,6 @@ dependencies {
     // Glide para cargar imágenes (opcional, para iconos personalizados)
     implementation 'com.github.bumptech.glide:glide:4.12.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
-    // OSMDroid (Mapa OpenStreetMap)
-    implementation 'org.osmdroid:osmdroid-mapsforge:6.1.16'  // Opcional para caché offline
-    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
-    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-    implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
-    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
-    implementation 'org.bouncycastle:bcprov-jdk15on:1.70'
 
     // Google Maps
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
