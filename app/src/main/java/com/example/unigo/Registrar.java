@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
@@ -80,6 +81,15 @@ public class Registrar extends AppCompatActivity {
             Intent intent = new Intent(Registrar.this, MainActivity.class);
             startActivity(intent);
             finish();
+        });
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                Intent intent = new Intent(Registrar.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
         });
 
     }

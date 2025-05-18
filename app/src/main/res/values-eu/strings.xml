@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">MovGasteiz</string>
     <string name="andar">Oinez</string>
     <string name="bici">Bizikleta</string>
     <string name="bus">Autobusa</string>
-    <string name="hello_blank_fragment" translatable="false">Oinezko Fragmentua</string>
+    <string name="hello_blank_fragment">Oinezko Fragmentua</string>
     <string name="origen">Jatorria</string>
     <string name="hint_origen">Sartu zure jatorria</string>
     <string name="destino">Helmuga</string>
@@ -12,40 +10,54 @@
     <string name="fecha_trayecto">Bidaia data</string>
     <string name="hora_trayecto">Bidaia ordua</string>
     <string name="hint_fecha">ee/hh/uuuu</string>
-    <string name="hint_hora">hh:mm</string>
     <string name="consultar">Kontsultatu</string>
     <string name="bienvenido">Ongi etorri</string>
     <string name="bienvenido_con_nombre">Ongi etorri %s</string>
-    <string name="confi">Ezarpenak</string>
+    <string name="confi">Konfigurazioa</string>
     <string name="tiemGas">Gasteizko eguraldia</string>
-    <string name="rutasFavo">Zure ibilbide gogokoak</string>
+    <string name="rutasFavo">Zure gogoko ibilbideak</string>
     <string name="centubi">Zentratu nire kokapenean</string>
     <string name="distance_meters">Distantzia: %d m</string>
     <string name="distance_kilometers">Distantzia: %.2f km</string>
     <string name="duration">Denbora: %s</string>
     <string name="location_permission_title">Kokapen baimena beharrezkoa</string>
-    <string name="location_permission_message">Oinezko ibilbide zehatzak erakusteko, zure kokapenaren sarbidea behar dugu</string>
+    <string name="location_permission_message">Oinezko ibilbide zehatzak erakusteko, zure kokapenerako sarbidea behar dugu</string>
     <string name="understood_button">Ulertuta</string>
     <string name="deny_button">Ukatu</string>
     <string name="rutaBus">Autobus ibilbideak</string>
     <string name="todasMarque">Ikusi markesina guztiak</string>
     <string name="rutaCeme">Ikusi hilerrirako ibilbideak</string>
     <string name="seleFecha">Aukeratu data</string>
-    <string name="no_routes_title">Ez dago ibilbiderik eskuragarri</string>
+    <string name="no_routes_title">Ez dago ibilbiderik</string>
     <string name="no_routes_message">Ez dago hilerrirako ibilbiderik %1$s egunetan. Beste data bat ikusi nahi duzu?</string>
     <string name="yes_button">Bai</string>
     <string name="no_button">Ez</string>
     <string name="ingreOriDes">Sartu jatorria eta helmuga</string>
     <string name="noubi">Ezin izan da kokapena lortu</string>
-    <string name="errorParadas">Errorea geldialdiak lortzean</string>
+    <string name="errorParadas">Errorea geltokiak lortzean</string>
     <string name="error_empty_origin">Sartu jatorria</string>
     <string name="error_empty_destination">Sartu helmuga</string>
     <string name="error_empty_date">Sartu data</string>
     <string name="error_empty_time">Sartu ordua</string>
-    <string name="iniSesi">Saioa hasi</string>
+    <string name="iniSesi">Hasi saioa</string>
     <string name="registrar">Erregistratu</string>
     <string name="noregis">Sartu erregistratu gabe</string>
     <string name="bienIniSe">Ongi etorri! Hasi saioa</string>
     <string name="correo">Posta elektronikoa</string>
-    <string name="olvContra">Pasahitza ahaztu dut</string>
+    <string name="olvContra">Ahaztu dut pasahitza</string>
+    <string name="contra">Pasahitza</string>
+    <string name="duration_minutes">%d min</string>
+    <string name="duration_hours_minutes">%d h %d min</string>
+    <string name="route_calculation_error">Errorea ibilbidea kalkulatzean: %s</string>
+    <string name="no_bike_route_found">Ez da bizikletarako ibilbiderik aurkitu</string>
+    <string name="loading_routes_error">Errorea ibilbideak kargatzean: %s</string>
+    <string name="waiting_for_location">Uneko kokapena itxaroten…</string>
+    <string name="location_unavailable">Kokapena ez dago erabilgarri</string>
+    <string name="using_default_location">Lehenetsitako kokapena erabiltzen</string>
+    <string name="permission_denied_message">Baimena ukatu da. Lehenetsitako kokapena erabiltzen</string>
+    <string name="general">Ezarpen Orokorrak</string>
+    <string name="notifi">Jakinarazpenak</string>
+    <string name="idioma">Hizkuntza</string>
+    <string name="temaApp">APP-aren itxura</string>
+    <string name="cerrarsesion">Amaitu saioa</string>
 </resources>

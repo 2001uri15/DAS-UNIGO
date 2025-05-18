@@ -97,6 +97,9 @@ public class DBServer extends Worker {
                 case "guardarFCM":
                     result = guardarFCM(tokenFCM);
                     break;
+                case "olvimail":
+                    result = olviMail(mail);
+                    break;
                 default:
                     return Result.failure(createOutputData("Error: Acción no válida"));
             }
@@ -388,6 +391,13 @@ public class DBServer extends Worker {
         String recuerso = "guardarFCM.php";
         Map<String, String> params = new HashMap<>();
         params.put("tokenFCM", tokenFCM);
+        return hacerPeticion(recuerso, params, METHOD_POST);
+    }
+
+    private String olviMail(String mail) throws IOException{
+        String recuerso = "restaurarContra.php";
+        Map<String, String> params = new HashMap<>();
+        params.put("email", mail);
         return hacerPeticion(recuerso, params, METHOD_POST);
     }
 }

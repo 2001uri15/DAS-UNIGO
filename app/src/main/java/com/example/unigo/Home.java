@@ -98,7 +98,6 @@ public class Home extends AppCompatActivity {
                     .commit();
         }
 
-
     }
 
     private void actualizarIdioma(){
@@ -144,8 +143,5 @@ public class Home extends AppCompatActivity {
         WorkManager.getInstance(this).enqueue(loginRequest);
     }
 
-    private void showError(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
 
 }

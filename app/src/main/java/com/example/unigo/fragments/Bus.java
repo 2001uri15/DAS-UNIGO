@@ -671,23 +671,6 @@ public class Bus extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
-//        // Verificar si hay datos en el Intent (por si el fragmento se recrea)
-//        if (getActivity() != null && getActivity().getIntent() != null) {
-//            Intent intent = getActivity().getIntent();
-//            String origen = intent.getStringExtra("origen");
-//            String destino = intent.getStringExtra("destino");
-//            if (origen != null && destino != null) {
-//                inputOrigen.setText(origen);
-//                inputDestino.setText(destino);
-//                actualizarEstadoFavorito(origen, destino);
-//
-//                // Limpiar los extras para que no se vuelvan a cargar
-//                intent.removeExtra("origen");
-//                intent.removeExtra("destino");
-//            }
-//        }
-
         listSugerenciasOrigen.setVisibility(GONE);
         listSugerenciasDestino.setVisibility(GONE);
     }
@@ -746,11 +729,16 @@ public class Bus extends Fragment {
             String origen = args.getString("origen");
             String destino = args.getString("destino");
 
-            if (origen != null && destino != null) {
+            if (origen != null && !origen.isEmpty()) {
                 inputOrigen.setText(origen);
-                inputDestino.setText(destino);
-                actualizarEstadoFavorito(origen, destino);
             }
+
+            if (destino != null && !destino.isEmpty()) {
+                inputDestino.setText(destino);
+            }
+
+            // Actualizar el estado del botón de favoritos
+            actualizarEstadoFavorito(origen, destino);
         }
     }
 }

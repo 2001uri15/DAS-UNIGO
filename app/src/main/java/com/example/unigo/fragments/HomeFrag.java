@@ -1,7 +1,6 @@
 package com.example.unigo.fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -19,11 +18,9 @@ import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
-import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
-import com.example.unigo.Home;
-import com.example.unigo.MainActivity;
 import com.example.unigo.R;
 import com.example.unigo.database.DBLocal;
 import org.json.JSONArray;
@@ -33,7 +30,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -402,21 +398,21 @@ public class HomeFrag extends Fragment {
             routeView.setText(String.format("%s → %s", route.getOrigin(), route.getDestination()));
 
             cardView.setOnClickListener(v -> {
-                // Usar el NavController de la actividad
-//                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
-//
-//                // Crear bundle con los datos
-//                Bundle args = new Bundle();
-//                args.putString("origen", route.getOrigin());
-//                args.putString("destino", route.getDestination());
-//
-//                // Navegar al fragmento Bus
-//                navController.navigate(R.id.action_homeFrag_to_bus, args);
-//
-//                // Seleccionar el ítem correspondiente en el BottomNavigationView
-//                if (getActivity() instanceof Home) {
-//                    ((Home) getActivity()).selectBottomNavItem(R.id.nav_bus);
-//                }
+                // Crear el fragmento destino
+                Bus busFragment = new Bus();
+
+                // Pasar los parámetros
+                Bundle args = new Bundle();
+                args.putString("origen", route.getOrigin());
+                args.putString("destino", route.getDestination());
+                busFragment.setArguments(args);
+
+                // Realizar la transacción
+                requireActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, busFragment)
+                        .addToBackStack("bus_fragment")
+                        .commit();
             });
 
             favoritesContainer.addView(cardView);
